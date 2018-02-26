@@ -74,6 +74,10 @@ export class MachineSelectorController {
    * Callback which is called for check workspaceDetails changes.
    */
   private onChange: Function;
+  /**
+   * Filter function.
+   */
+  private filter: Function;
 
   /**
    * Default constructor that is using resource injection.
@@ -121,22 +125,30 @@ export class MachineSelectorController {
     this.machines.length = 0;
     this.machinesList.length = 0;
 
-    const machines = this.environmentManager.getMachines(this.environment, workspaceDetails.runtime);
+    let machines = this.environmentManager.getMachines(this.environment, workspaceDetails.runtime);
     if (!angular.isArray(machines) || machines.length === 0) {
       return;
     }
+
+    let names = [];
     machines.forEach((machine: IEnvironmentManagerMachine) => {
       const isDev = this.environmentManager.isDev(machine);
       if (isDev && !this.selectedMachine) {
         this.selectedMachine = machine;
       }
-      this.machines.push(machine);
-      this.machinesList.push({
-        name: machine.name,
-        isDev: isDev
-      });
+
+      if ((this.filter && this.filter(machine)) || !this.filter) {
+        names.push(machine.name);
+        this.machines.push(machine);
+        this.machinesList.push({
+          name: machine.name,
+          isDev: isDev
+        });
+      }
     });
-    this.updateData(this.selectedMachine ? this.selectedMachine.name : machines[0].name);
+
+    let name = this.selectedMachine && names.indexOf(this.selectedMachine.name) >= 0 ? this.selectedMachine.name : this.machinesList[0].name;
+    this.updateData(name);
   }
 
   /**
@@ -154,6 +166,7 @@ export class MachineSelectorController {
     this.selectedMachine = this.machines.find((machine: IEnvironmentManagerMachine) => {
       return machine.name === machineName;
     });
+
     if (angular.isFunction(this.$scope.setMachine)) {
       this.$scope.setMachine(this.selectedMachine);
     }

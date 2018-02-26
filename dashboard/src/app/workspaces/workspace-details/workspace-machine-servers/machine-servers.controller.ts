@@ -50,7 +50,6 @@ export class MachineServersController {
   constructor($scope: ng.IScope, $mdDialog: ng.material.IDialogService, confirmDialogService: ConfirmDialogService) {
     this.$mdDialog = $mdDialog;
     this.confirmDialogService = confirmDialogService;
-
     this.buildServersList(this.selectedMachine);
     const deRegistrationFn = $scope.$watch(() => {
       return this.selectedMachine;
