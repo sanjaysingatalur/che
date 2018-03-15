@@ -32,8 +32,9 @@ type machine = {
  */
 export class MachineSelectorController {
 
-  static $inject = ['$scope', 'cheEnvironmentRegistry', 'workspaceDetailsService'];
+  static $inject = ['$timeout', '$scope', 'cheEnvironmentRegistry', 'workspaceDetailsService'];
 
+  $timeout: ng.ITimeoutService;
   /**
    * The selected machine.
    */
@@ -82,10 +83,10 @@ export class MachineSelectorController {
   /**
    * Default constructor that is using resource injection.
    */
-  constructor($scope: ng.IScope, cheEnvironmentRegistry: CheEnvironmentRegistry, workspaceDetailsService: WorkspaceDetailsService) {
+  constructor($timeout, $scope: ng.IScope, cheEnvironmentRegistry: CheEnvironmentRegistry, workspaceDetailsService: WorkspaceDetailsService) {
     this.$scope = $scope;
+    this.$timeout = $timeout;
     this.cheEnvironmentRegistry = cheEnvironmentRegistry;
-
     this.init(this.workspaceDetails);
     const action = this.init.bind(this);
     workspaceDetailsService.subscribeOnWorkspaceChange(action);
@@ -148,7 +149,9 @@ export class MachineSelectorController {
     });
 
     let name = this.selectedMachine && names.indexOf(this.selectedMachine.name) >= 0 ? this.selectedMachine.name : this.machinesList[0].name;
-    this.updateData(name);
+    this.$timeout(() => {
+      this.updateData(name);
+    }, 500);
   }
 
   /**

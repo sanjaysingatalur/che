@@ -11,6 +11,7 @@
 'use strict';
 import {IPackage, ISearchResults, NpmRegistry} from '../../../../../components/api/npm-registry.factory';
 import {WorkspaceDetailsToolsService} from '../workspace-details-tools.service';
+import {IEnvironmentManagerMachine} from '../../../../../components/api/environment/environment-manager-machine';
 
 const THEIA_PLUGINS = 'THEIA_PLUGINS';
 
@@ -60,6 +61,17 @@ export class WorkspaceToolsIdeController {
     let machine = this.workspaceDetailsToolsService.getCurrentMachine();
     this.environmentVariables = this.workspaceDetailsToolsService.getEnvironmentManager().getEnvVariables(machine);
     this.plugins = machine && this.environmentVariables[THEIA_PLUGINS] ? this.environmentVariables[THEIA_PLUGINS].split(',') : [];
+
+
+    const deRegistrationFn = $scope.$watch(() => {
+      return this.workspaceDetailsToolsService.getCurrentMachine();
+    }, (machine: IEnvironmentManagerMachine) => {
+      alert(machine);
+    }, true);
+
+    $scope.$on('$destroy', () => {
+      deRegistrationFn();
+    });
   }
 
 
