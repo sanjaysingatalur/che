@@ -1,4 +1,4 @@
-# Runtime image to use for booting and compiling Eclipse Che
+# Runtime image to use for booting and compiling Eclipse Che this is latest
 workspace.runtime.docker.image="florentbenoit/che-in-che"
 
 # Commands that will appear on the IDE commands widget
